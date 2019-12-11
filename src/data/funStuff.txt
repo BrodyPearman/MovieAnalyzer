@@ -1,0 +1,21 @@
+if(movID1!=movID2){ //for every pair of different dmovies
+					for(int y: review.keySet()){ //grab a reviewer 
+						int counter=0; //count how many times this reviewer had the same rating as another one
+						Reviewer rev=review.get(y);
+						for(int x: review.keySet()){
+							Reviewer rev2=review.get(x); //other reviewer
+								if(rev.getReviewerId()!=rev2.getReviewerId()){ //if they are different reviewers
+									double d=rev.getMovieRating(movID1); //see their ratings for the two movies of interest
+									double d2=rev2.getMovieRating(movID1);
+									double d3=rev.getMovieRating(movID2);
+									double d4=rev.getMovieRating(movID2);
+									if(d==d2 && d4==d3 && d==d4 && d!=-1){
+										counter++; //if the rating is equal increment the counter
+									}
+								}
+						}
+						if(counter>=12){
+							g.addEdge(k,j);
+							break;
+						}
+					}	

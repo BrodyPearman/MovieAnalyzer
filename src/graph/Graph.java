@@ -1,9 +1,11 @@
+package graph;
 import java.util.HashMap; 
 import java.util.ArrayList;
 import java.util.Map; 
 import java.util.List;
 import java.util.Set;
 import java.util.Random;
+
 //Authors: Brody Pearman and Jewell Day
 //Version: 10/9/19
 public class Graph<V> implements GraphIfc<V>
@@ -176,5 +178,4 @@ public class Graph<V> implements GraphIfc<V>
 		return gString;
 	}
 	
-
 }
