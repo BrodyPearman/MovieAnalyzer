@@ -60,7 +60,7 @@ public class PriorityQueue {
 	 *	</ul>
 	 *
 	 */
-	public void pop(){
+	public int pop(){
 		if(isEmpty()){
 			throw new AssertionError();
 		}
@@ -69,7 +69,9 @@ public class PriorityQueue {
 			Pair p=heap.remove(size()-1);
 			location.remove(p.element);
 			pushDownRoot();
+			return (int) p.element;
 		}
+		
 	}
 
 

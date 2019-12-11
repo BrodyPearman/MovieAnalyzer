@@ -52,7 +52,7 @@ public class Graph<V> implements GraphIfc<V>
 		}
 		//if the adj list does not have a vertex
 		else if (adjList.containsKey(v)==false){
-			adjList.put(v,new ArrayList());
+			adjList.put(v,new ArrayList<>());
 		}
 	}
 	
@@ -127,7 +127,7 @@ public class Graph<V> implements GraphIfc<V>
 	 * @throws IllegalArgumentException if either vertex does not occur in the graph
 	 */
 	public boolean edgeExists(V v, V u){
-		//if either vertice is not in the map
+		//if either vertex is not in the map
 		if(adjList.containsKey(v)==false || adjList.containsKey(u)==false){
 			throw new IllegalArgumentException();
 		}
