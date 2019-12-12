@@ -39,7 +39,7 @@ public class MovieLensAnalyzer {
 		System.out.println("[Option 3] u is adjacent to v if at least 33.0% of the users that rated u gave the same rating to v");
 		System.out.println("\n");
 		boolean b=true;
-		System.out.println("Choose an option to build the graph (1-3");
+		System.out.println("Choose an option to build the graph (1-3)");
 		Graph<Integer> graph= new Graph<>();
 		while(b){
 			String s= scan.nextLine();
@@ -162,13 +162,13 @@ public class MovieLensAnalyzer {
 
 
     public static Graph<Integer> graphBuilderOption1(HashMap<Integer,Movie> movies, HashMap<Integer,Reviewer> review){
-    	Graph<Integer> g= new Graph<>();
-        Set<Integer> movieList= movies.keySet();
-        Set<Integer> reviewerList = review.keySet();
-        //ArrayList<Integer> movieIDs= new ArrayList<>();
+    	Graph<Integer> g= new Graph<>(); //instantiate graph to return
+        Set<Integer> movieList= movies.keySet();//get movies 
+        Set<Integer> reviewerList = review.keySet();//get reviewer ids
+        //for every movie, add its index as a vertex
         for(Integer a: movieList){
             g.addVertex(a);
-            //movieIDs.add(movies.get(g).getMovieId());
+         
 
         }
 
@@ -198,7 +198,7 @@ public class MovieLensAnalyzer {
 						}
 						if(numSame==12){
 							g.addEdge(a, b);
-							g.addEdge(b, a);
+							//g.addEdge(b, a);
 							break;
 						}
 					}
@@ -233,7 +233,7 @@ public class MovieLensAnalyzer {
 				}
 				if(counter>=12){
 					g.addEdge(k,j);
-					g.addEdge(j,k);
+					//g.addEdge(j,k);
 				}
 
 			}  
@@ -284,7 +284,7 @@ public class MovieLensAnalyzer {
                 	}
                 	if(numSame/numReviewers >= .33){
                 		g.addEdge(i, j);
-                		g.addEdge(j, i);
+                		//g.addEdge(j, i);
                 	}
 
 					}
@@ -302,35 +302,43 @@ public class MovieLensAnalyzer {
     }
 
 	public static String option1(Graph<Integer> g){
-		String s="";
+		String s="raph statistics: " + "\n";
 		int edges= g.numEdges();
 		int nodes= g.numVertices();
 		double density= ((double) edges)/(nodes*(nodes-1));
-		s+="Number of nodes: " +nodes+"\n";
+		s+="Number of nodes: " +nodes + "\n";
 		s+="Number of edges: "+ edges + "\n";
 		s+="Density: "+ density +"\n";
 		int maxDeg=0;
+		Integer maxDegreeNode=-1;
 		for(Integer i: g.getVertices()) {
 			if(g.degree(i)>maxDeg) {
 				maxDeg=g.degree(i);
+				maxDegreeNode=i;
 			}
 		}
-		s+="Max Degree: "+ maxDeg + "\n";
+		s+="Max Degree: "+ maxDeg + " (node " + maxDegreeNode + ")" +"\n";
 		int[][] floyd= GraphAlgorithms.floydWarshall(g);
 		int maximum=0;
 		int sum=0;
 		int ticker=0;
+		int start=-1;
+		int end=-1;
 		for(int i=0; i<floyd.length;i++) {
 			for(int j=0; j<floyd[i].length;j++) {
-				sum+=floyd[i][j];
-				ticker++;
-				if(maximum<floyd[i][j]) {
-					maximum=floyd[i][j];
+				if(floyd[i][j]!=GraphAlgorithms.infinity) {
+					sum+=floyd[i][j];
+					ticker++;
+					if(maximum<floyd[i][j]) {
+						maximum=floyd[i][j];
+						start=i;
+						end=j;
+					}
 				}
 			}
 		}
 		double average= ((double) sum)/ticker;
-		s+="Diameter: " + maximum + "\n";
+		s+="Diameter: " + maximum + " (from " + start + " to " + end + ")" + "\n";
 		s+="Average length of the shortest paths: " + average;
 		return s;
 	}
@@ -340,13 +348,12 @@ public class MovieLensAnalyzer {
 		Movie m= movies.get(input);
 		s+=m.toString();
 		s+="\n";
-		s+="Adjacent to: ";
+		s+="Neighbors: " + "\n";
 		for(Integer i: g.getNeighbors(input)) {
 			Movie sub= movies.get(i);
 			String title= sub.getTitle();
-			s+=title + ", ";
+			s+=title + "\n";
 		}
-		s=s.substring(0,s.length());
 		return s;
 	}
 	public static String option3(Graph<Integer> g,Map<Integer,Movie> movies, int movieID1, int movieID2){
@@ -356,19 +363,13 @@ public class MovieLensAnalyzer {
         Integer i = movieID2; 
 
         String s1 = "The shortest path between " + movies.get(movieID1).getTitle() + " and " + movies.get(movieID2).getTitle() +" is ";
-
         String s = "";
-
         int count = 0;
 
         while(i != null){
-
             s =  movies.get(i).getTitle() + "\n\t|\n" + s;
-
             count++;
-
             i = fastestPaths[i];
-
         }
 
         return s1 + count +" movies long and follows the path:\n" + s;
