@@ -1,11 +1,15 @@
 package analyzer;
 import java.util.Scanner;
+import java.util.Map;
 import data.Reviewer;
 import data.Movie;
 import graph.Graph;
 import graph.GraphAlgorithms;
 import util.DataLoader;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
+
 /**
  * Please include in this comment you and your partner's name and describe any extra credit that you implement 
  */
@@ -27,8 +31,8 @@ public class MovieLensAnalyzer {
 		System.out.println(second);
 		DataLoader d= new DataLoader();
 		d.loadData(first,second);
-		HashMap<Integer, Reviewer> review= (HashMap) d.getReviewers();
-		HashMap<Integer, Movie> movies= (HashMap) d.getMovies();
+		HashMap<Integer, Reviewer> review= (HashMap<Integer,Reviewer>) d.getReviewers();
+		HashMap<Integer, Movie> movies= (HashMap<Integer,Movie>) d.getMovies();
 		System.out.println("There are three choices for defining adjacency: ");
 		System.out.println("[Option 1] u and v are adjacent if the same 12 users gave the same rating to both movies");
 		System.out.println("[Option 2] u and v are adjacent if the same 12 users watched both movies (regardless of rating)");
@@ -41,7 +45,6 @@ public class MovieLensAnalyzer {
 			String s= scan.nextLine();
 			if(s.length()!=1) {
 				System.out.println("Please enter an integer 1-3");
-
 			}
 			else{
 				if(s.equals("1")){
@@ -109,8 +112,38 @@ public class MovieLensAnalyzer {
 					}
 				}
 				else if(s.equals("3")){
-					String p=option3(graph);
-					System.out.println(p);
+					boolean t=true;
+					while(t) {
+						System.out.println("Please select a start node: ");
+						try {
+							int startNode=scan.nextInt();
+							if(movies.containsKey(startNode)) {
+								System.out.println("Please select an end node: ");
+								boolean brody=true;
+								while(brody) {
+									int endNode=scan.nextInt();
+									if(movies.containsKey(endNode)) {
+										String str=option3(graph,movies,startNode,endNode);
+										System.out.println(str);
+										brody=false;
+									}
+									else
+									{
+										System.out.println("No such node. Please try again.");
+									}
+								}
+								t=false;
+							}
+							else {
+								System.out.println("No such node. Please try again.");
+							}
+							
+						}
+						catch(Exception e) {
+							System.out.println("Please print a valid integer");
+							
+						}
+					}
 				}
 				else if(s.equals("4")) {
 					System.out.println("Closing program");
@@ -127,81 +160,51 @@ public class MovieLensAnalyzer {
 
 
 
+
     public static Graph<Integer> graphBuilderOption1(HashMap<Integer,Movie> movies, HashMap<Integer,Reviewer> review){
-
-        Graph<Integer> g= new Graph<>();
-
-        int movieList[] = movies.getkeys();
-
-        int reviewerList[] = review.keySet();
-
+    	Graph<Integer> g= new Graph<>();
+        Set<Integer> movieList= movies.keySet();
+        Set<Integer> reviewerList = review.keySet();
         //ArrayList<Integer> movieIDs= new ArrayList<>();
-
-        for(int a: movieList){
-
+        for(Integer a: movieList){
             g.addVertex(a);
-
             //movieIDs.add(movies.get(g).getMovieId());
 
         }
 
-        for(int i=0; i< movies.size()-1; i++){
-
-            for(int j=i+1; j< movies.size(); j++){
+        for(Integer i: movieList){
+            for(Integer j: movieList){
 
                 //gets the people who have reviewed each movie
-
-                int a = movieList[a];
-
-                int b = movieList[b];
-
-                int aRev[] = movies.get(a).getRatings().getKeySet();
-
-                int bRev[] = movies.get(b).getRatings().getKeySet();
-
-                if(aRev.length > bRev.length){
-
-                    int temp[] = aRev;
-
-                    aRev = bRev;
-
-                    bRev = temp;
-
-                }
-
-                //iterates over the shortest list and counts how many 
-
-                //gave the same review for both
-
-                int numSame = 0;
-
-                for(int c: aRev){
-
-                    if(movies.get(a).getRating(c)==movies.get(b).getRating(c)){
-
-                        numSame++;
-
-                    }
-
-                    if(numSame==12){
-
-                        g.addEdge(a, b);
-
-                        g.addEdge(b, a);
-
-                        break;
-
-                    }
-
-                }
-
+                int a = i;
+                int b = j;
+            	int movID1= movies.get(i).getMovieId();
+				int movID2= movies.get(j).getMovieId();
+				if(movID1!=movID2) {
+                
+					Set<Integer> aRev = movies.get(i).getRatings().keySet();
+					Set<Integer> bRev = movies.get(j).getRatings().keySet();
+					if(aRev.size()> bRev.size()){
+						Set<Integer> temp = aRev;
+						aRev = bRev;
+						bRev = temp;
+					}
+					//iterates over the shortest list and counts how many 
+					//gave the same review for both
+					int numSame = 0;
+					for(int c: aRev){
+						if(movies.get(a).getRating(c)==movies.get(b).getRating(c)){
+							numSame++;
+						}
+						if(numSame==12){
+							g.addEdge(a, b);
+							g.addEdge(b, a);
+							break;
+						}
+					}
+				}
             }
-
-
-
-        }
-
-
+       }
 
         return g;
 
@@ -242,86 +245,53 @@ public class MovieLensAnalyzer {
 
 
 	public static Graph<Integer> graphBuilderOption3(Map<Integer,Movie> movies, Map<Integer,Reviewer> review){
-
         Graph<Integer> g= new Graph<>();
-
-        int movieList[] = movies.keySet();
-
-        int reviewerList[] = review.keySet();
+        Set<Integer> movieList= movies.keySet();
+        Set<Integer> reviewerList = review.keySet();
 
         //ArrayList<Integer> movieIDs= new ArrayList<>();
 
-        for(int a: moviesList){
-
+        for(int a: movieList){
             g.addVertex(a);
-
             //movieIDs.add(movies.get(g).getMovieId());
-
         }
 
-        for(int i=0; i< movies.size()-1; i++){
-
-            for(int j=i+1; j< movies.size(); j++){
-
+        for(int i : movieList){
+            for(int j : movieList){
                 //gets the people who have reviewed each movie
+            	int movID1= movies.get(i).getMovieId();
+				int movID2= movies.get(j).getMovieId();
+				if(movID1!=movID2) {
+					Set<Integer> aRev = movies.get(i).getRatings().keySet();
+					Set<Integer> bRev = movies.get(j).getRatings().keySet();
+					if(aRev.size() > bRev.size()){
+						Set<Integer> temp = aRev;
+						aRev = bRev;
+						bRev = temp;
+					}
+					//iterates over the shortest list and counts how many 
+					//gave the same review for both
+					double numSame = 0;
+					double numReviewers = 0;
+                	for(int c: aRev){
+                		if(movies.get(i).getRating(c)==movies.get(j).getRating(c)){
+                			numReviewers+=1;
+                			numSame+=1;
+                		}
+                		else if(movies.get(j).getRating(c)!=-1){
+                			numReviewers++;
+                		}
+                	}
+                	if(numSame/numReviewers >= .33){
+                		g.addEdge(i, j);
+                		g.addEdge(j, i);
+                	}
 
-                int a = movieList[a];
+					}
 
-                int b = movieList[b];
-
-                int aRev[] = movies.get(a).getRatings().getKeySet();
-
-                int bRev[] = movies.get(b).getRatings().getKeySet();
-
-                if(aRev.length > bRev.length){
-
-                    int temp[] = aRev;
-
-                    aRev = bRev;
-
-                    bRev = temp;
-
-                }
-
-                //iterates over the shortest list and counts how many 
-
-                //gave the same review for both
-
-                double numSame = 0;
-
-                double numReviewers = 0;
-
-                for(int c: aRev){
-
-                    if(movies.get(a).getRating(c)==movies.get(b).getRating(c)){
-
-                        numReviewers+=1;
-
-                        numSame+=1;
-
-                    }
-
-                    else if(movies.get(b).getRating(c)!=-1){
-
-                        numReviewers++;
-
-                    }
-
-                }
-
-                if(numSame/numReviewers >= .33){
-
-                    g.addEdge(a, b);
-
-                    g.addEdge(b, a);
-
-                }
+            	}
 
             }
-
-
-
-        }
 
 
 
