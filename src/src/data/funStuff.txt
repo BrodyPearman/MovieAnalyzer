@@ -1,0 +1,67 @@
+		int[][] a= new int[numVertices+1][numVertices+1];//make it one larger to avoid 0 error
+		for(int i=1; i< numVertices+1;i++){
+			for (int j=1; j< numVertices+1;j++){
+				if(graph.edgeExists(i,j)){//if you can get from one node to another without intermediates
+					a[i][j]=1;
+
+				}
+				else if(i==j) {
+					a[i][j]=0; //no cost to go to same node
+				}
+				else {
+					a[i][j]=infinity; //else set to infinity
+				}
+			}
+		}
+		
+		for(int k=1; k<numVertices+1;k++){
+			for(int l=1; l<numVertices+1;l++){
+				for(int m=1; m<numVertices+1;m++){//for more and more intermediate nodes
+					int option1= a[l][k]+a[k][m];
+					int option3= a[l][m];
+					int step= Math.min(option1,option3);//find shortest path 
+					a[l][m]= step;
+				}
+			}
+			
+			
+		}
+		System.out.println(a[69][981]);
+		return a;
+		
+		
+		
+		
+		
+		int numVertices= graph.numVertices();
+		int[][] a= new int[numVertices+1][numVertices+1];//make it one larger to avoid 0 error
+		for(int i=1; i< numVertices+1;i++){
+			for (int j=1; j< numVertices+1;j++){
+				if(graph.edgeExists(i,j)){//if you can get from one node to another without intermediates
+					a[i][j]=1;
+
+				}
+				else if(i==j) {
+					a[i][j]=0; //no cost to go to same node
+				}
+				else {
+					a[i][j]=infinity; //else set to infinity
+				}
+			}
+		}
+		
+		for(int k=1; k<numVertices+1;k++){
+			for(int l=1; l<numVertices+1;l++){
+				for(int m=1; m<numVertices+1;m++){//for more and more intermediate nodes
+					int option1= a[l][k]+a[k][m];
+					int option3= a[l][m];
+					int step= Math.min(option1,option3);//find shortest path 
+					a[l][m]= step;
+				}
+			}
+		}	
+			
+		/*
+		 * for(int p=1;p<numVertices+1;p++) { for(int q=1;q<numVertices+1;q++) {
+		 * if(a[p][q]==infinity && p%5==1) { System.out.println(p);
+		 * System.out.println(q); System.out.println("sep"); } } }
